@@ -7,64 +7,58 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --primary: #0891b2;
       --bg: #1c1917;
       --section-bg: #2e2a27;
+      --primary: #0891b2;
       --accent: #38bdf8;
-      --white: #ffffff;
+      --text: #ffffff;
     }
 
-    html {
-      scroll-behavior: smooth;
+    * {
+      box-sizing: border-box;
     }
 
     body {
       margin: 0;
       font-family: 'Inter', sans-serif;
       background-color: var(--bg);
-      color: var(--white);
+      color: var(--text);
       line-height: 1.6;
     }
 
     header {
       background-color: var(--primary);
-      padding: 2rem;
+      padding: 2rem 1rem;
       text-align: center;
-      animation: slideIn 1s ease-out;
     }
 
     header h1 {
       margin: 0;
       font-size: 2.5rem;
-      transition: color 0.3s;
-    }
-
-    header h1:hover {
-      color: var(--bg);
     }
 
     header p {
+      margin-top: 0.5rem;
       font-size: 1.2rem;
     }
 
-    .section {
+    main {
       max-width: 900px;
-      margin: 2rem auto;
-      padding: 1.5rem;
-      background-color: var(--section-bg);
-      border-radius: 12px;
-      box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);
-      transition: transform 0.3s, box-shadow 0.3s;
+      margin: 0 auto;
+      padding: 2rem 1rem;
     }
 
-    .section:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 0 25px rgba(0, 0, 0, 0.5);
+    section.section {
+      background-color: var(--section-bg);
+      margin-bottom: 2rem;
+      padding: 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
     }
 
     h2 {
-      color: var(--accent);
       margin-top: 0;
+      color: var(--accent);
     }
 
     p, li {
@@ -74,24 +68,25 @@
     a {
       color: var(--accent);
       text-decoration: none;
-      transition: text-shadow 0.3s ease;
     }
 
-    a:hover {
-      text-shadow: 0 0 10px var(--accent);
+    .skills, .socials {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.75rem;
     }
 
     .skills img,
     .socials img {
-      margin: 0.5rem;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      filter: drop-shadow(0 0 3px #000);
+      width: 36px;
+      height: 36px;
+      transition: transform 0.2s ease;
     }
 
     .skills img:hover,
     .socials img:hover {
-      transform: scale(1.2);
-      box-shadow: 0 0 15px var(--accent);
+      transform: scale(1.1);
     }
 
     .badges img {
@@ -99,68 +94,25 @@
       max-width: 500px;
       margin: 1rem 0;
       border-radius: 12px;
-      animation: fadeIn 1.2s ease-in-out;
     }
 
     ul.inline-list {
       padding: 0;
-      margin: 1rem 0;
+      margin: 1rem 0 0 0;
       list-style: none;
       display: flex;
+      flex-wrap: wrap;
       gap: 1rem;
       justify-content: center;
-      flex-wrap: wrap;
-    }
-
-    /* Animations */
-    @keyframes slideIn {
-      from {
-        transform: translateY(-100px);
-        opacity: 0;
-      }
-      to {
-        transform: translateY(0);
-        opacity: 1;
-      }
-    }
-
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(30px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    @keyframes float {
-      0%, 100% {
-        transform: translateY(0px);
-      }
-      50% {
-        transform: translateY(-5px);
-      }
-    }
-
-    .skills img,
-    .socials img {
-      animation: float 3s ease-in-out infinite;
     }
 
     @media (max-width: 600px) {
       header h1 {
-        font-size: 1.8rem;
+        font-size: 2rem;
       }
 
-      .section {
-        margin: 1rem;
-        padding: 1rem;
-      }
-
-      .badges img {
-        max-width: 100%;
+      .skills, .socials {
+        justify-content: center;
       }
     }
   </style>
@@ -171,67 +123,83 @@
     <p>Machine Learning Researcher | TeX Enthusiast | Backend Developer</p>
   </header>
 
-  <section class="section">
-    <h2>About Me</h2>
-    <p>
-      I'm a developer with a strong focus on building analytical and task-oriented tools, and a deep passion for machine learning—especially designing models that work effectively in real-world deployments.
-      As a member of the <strong>TeX Users Group (TUG)</strong>, I value clarity, structure, and thoughtful design in both code and documentation.
-    </p>
-    <p>
-      I primarily work with <strong>Python</strong> and <strong>C++</strong>, blending expressiveness and performance. In backend development, I specialize in the <strong>Django REST Framework</strong>, crafting scalable APIs that integrate well with data systems.
-    </p>
-    <p>
-      Machine learning isn't just something I study; it's something I apply extensively. I'm especially interested in bridging the gap between theoretical ML models and production-grade applications.
-    </p>
-    <p>
-      Recently, I’ve been exploring functional programming languages for their elegance and abstraction, which is reshaping how I approach system design.
-    </p>
-    <ul>
-      <li>🌍 Based in India</li>
-      <li>✉️ <a href="mailto:adithyacherian@gmail.com">adithyacherian@gmail.com</a></li>
-      <li>🧠 Learning Django REST Framework</li>
-      <li>🤝 Open to collaborating on ML and backend projects</li>
-      <li>⚡ Love cycling and a coffee connoisseur</li>
-    </ul>
-  </section>
-
-  <section class="section">
-    <h2>Skills</h2>
-    <div class="skills">
+  <main>
+    <section class="section" id="about">
+      <h2>About Me</h2>
       <p>
-        <!-- Your skill icons remain unchanged -->
-        <!-- Place your existing <img> icons here as you already have them -->
+        I'm a developer with a strong focus on building analytical and task-oriented tools, and a deep passion for machine learning—especially designing models that work effectively in real-world deployments.
+        As a member of the <strong>TeX Users Group (TUG)</strong>, I value clarity, structure, and thoughtful design in both code and documentation.
       </p>
-    </div>
-  </section>
+      <p>
+        I primarily work with <strong>Python</strong> and <strong>C++</strong>, blending expressiveness and performance. In backend development, I specialize in the <strong>Django REST Framework</strong>, crafting scalable APIs that integrate well with data systems.
+      </p>
+      <p>
+        Machine learning isn't just something I study; it's something I apply extensively. I'm especially interested in bridging the gap between theoretical ML models and production-grade applications.
+      </p>
+      <p>
+        Recently, I’ve been exploring functional programming languages for their elegance and abstraction, which is reshaping how I approach system design.
+      </p>
+      <ul>
+        <li>🌍 Based in India</li>
+        <li>✉️ <a href="mailto:adithyacherian@gmail.com">adithyacherian@gmail.com</a></li>
+        <li>🧠 Learning Django REST Framework</li>
+        <li>🤝 Open to collaborating on ML and backend projects</li>
+        <li>⚡ Love cycling and a coffee connoisseur</li>
+      </ul>
+    </section>
 
-  <section class="section">
-    <h2>Socials</h2>
-    <div class="socials">
-      <a href="https://github.com/cloud9ops" target="_blank">
-        <img src="https://raw.githubusercontent.com/danielcranney/readme-generator/main/public/icons/socials/github.svg" width="36" title="GitHub">
-      </a>
-      <a href="https://www.linkedin.com/in/adithya-cherian-abraham-63a13824a/" target="_blank">
-        <img src="https://raw.githubusercontent.com/danielcranney/readme-generator/main/public/icons/socials/linkedin.svg" width="36" title="LinkedIn">
-      </a>
-    </div>
-  </section>
+    <section class="section" id="skills">
+      <h2>Skills</h2>
+      <div class="skills">
+        <img src="https://raw.githubusercontent.com/danielcranney/readme-generator/main/public/icons/skills/cplusplus-colored.svg" title="C++">
+        <img src="https://raw.githubusercontent.com/danielcranney/readme-generator/main/public/icons/skills/python-colored.svg" title="Python">
+        <img src="https://raw.githubusercontent.com/danielcranney/readme-generator/main/public/icons/skills/git-colored.svg" title="Git">
+        <img src="https://raw.githubusercontent.com/danielcranney/readme-generator/main/public/icons/skills/java-colored.svg" title="Java">
+        <img src="https://raw.githubusercontent.com/danielcranney/readme-generator/main/public/icons/skills/gnubash.svg" title="Bash">
+        <img src="https://raw.githubusercontent.com/danielcranney/readme-generator/main/public/icons/skills/neovim-colored.svg" title="Neovim">
+        <img src="https://raw.githubusercontent.com/danielcranney/readme-generator/main/public/icons/skills/vim-colored.svg" title="Vim">
+        <img src="https://raw.githubusercontent.com/danielcranney/readme-generator/main/public/icons/skills/visualstudiocode-colored.svg" title="VS Code">
+        <img src="https://raw.githubusercontent.com/danielcranney/readme-generator/main/public/icons/skills/html5-colored.svg" title="HTML5">
+        <img src="https://raw.githubusercontent.com/danielcranney/readme-generator/main/public/icons/skills/css3-colored.svg" title="CSS3">
+        <img src="https://raw.githubusercontent.com/danielcranney/readme-generator/main/public/icons/skills/postgresql-colored.svg" title="PostgreSQL">
+        <img src="https://raw.githubusercontent.com/danielcranney/readme-generator/main/public/icons/skills/mysql-colored.svg" title="MySQL">
+        <img src="https://raw.githubusercontent.com/danielcranney/readme-generator/main/public/icons/skills/flask-colored.svg" title="Flask">
+        <img src="https://raw.githubusercontent.com/danielcranney/readme-generator/main/public/icons/skills/django-colored.svg" title="Django">
+        <img src="https://raw.githubusercontent.com/danielcranney/readme-generator/main/public/icons/skills/aws-colored.svg" title="AWS">
+        <img src="https://raw.githubusercontent.com/danielcranney/readme-generator/main/public/icons/skills/pytorch-colored.svg" title="PyTorch">
+        <img src="https://raw.githubusercontent.com/danielcranney/readme-generator/main/public/icons/skills/docker-colored.svg" title="Docker">
+        <img src="https://raw.githubusercontent.com/danielcranney/readme-generator/main/public/icons/skills/linux-colored.svg" title="Linux">
+      </div>
+    </section>
 
-  <section class="section badges">
-    <h2>GitHub Stats</h2>
-    <img src="https://github-readme-stats.vercel.app/api?username=cloud9ops&show_icons=true&hide=&count_private=true&title_color=0891b2&text_color=ffffff&icon_color=0891b2&bg_color=1c1917&hide_border=true" alt="GitHub Stats">
-    <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=cloud9ops&langs_count=10&title_color=0891b2&text_color=ffffff&icon_color=0891b2&bg_color=1c1917&hide_border=true&locale=en&custom_title=Top%20Languages" alt="Top Languages">
-  </section>
-
-  <section class="section">
-    <h2>Support Me</h2>
-    <ul class="inline-list">
-      <li>
-        <a href="https://www.buymeacoffee.com/aderham" target="_blank">
-          <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" width="150" alt="Buy Me A Coffee">
+    <section class="section" id="socials">
+      <h2>Socials</h2>
+      <div class="socials">
+        <a href="https://github.com/cloud9ops" target="_blank" rel="noopener noreferrer">
+          <img src="https://raw.githubusercontent.com/danielcranney/readme-generator/main/public/icons/socials/github.svg" title="GitHub">
         </a>
-      </li>
-    </ul>
-  </section>
+        <a href="https://www.linkedin.com/in/adithya-cherian-abraham-63a13824a/" target="_blank" rel="noopener noreferrer">
+          <img src="https://raw.githubusercontent.com/danielcranney/readme-generator/main/public/icons/socials/linkedin.svg" title="LinkedIn">
+        </a>
+      </div>
+    </section>
+
+    <section class="section badges" id="stats">
+      <h2>GitHub Stats</h2>
+      <img src="https://github-readme-stats.vercel.app/api?username=cloud9ops&show_icons=true&hide=&count_private=true&title_color=0891b2&text_color=ffffff&icon_color=0891b2&bg_color=1c1917&hide_border=true" alt="GitHub Stats">
+      <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=cloud9ops&langs_count=10&title_color=0891b2&text_color=ffffff&icon_color=0891b2&bg_color=1c1917&hide_border=true&locale=en&custom_title=Top%20Languages" alt="Top Languages">
+    </section>
+
+    <section class="section" id="support">
+      <h2>Support Me</h2>
+      <ul class="inline-list">
+        <li>
+          <a href="https://www.buymeacoffee.com/aderham" target="_blank" rel="noopener noreferrer">
+            <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" width="150" alt="Buy Me A Coffee">
+          </a>
+        </li>
+      </ul>
+    </section>
+  </main>
 </body>
 </html>
