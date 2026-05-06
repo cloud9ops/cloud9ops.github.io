@@ -2,273 +2,559 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Adithya Cherian Abraham</title>
 
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
 
   <style>
-    :root {
-      --bg: #0f172a;
-      --card-bg: rgba(30, 41, 59, 0.75);
-      --border: rgba(255, 255, 255, 0.08);
-      --primary: #38bdf8;
-      --accent: #0891b2;
-      --text: #e5e7eb;
-      --muted: #94a3b8;
+
+    :root{
+      --bg:#020617;
+      --card:#0f172a;
+      --border:rgba(255,255,255,0.08);
+      --primary:#38bdf8;
+      --secondary:#7dd3fc;
+      --text:#e2e8f0;
+      --muted:#94a3b8;
+      --glow:rgba(56,189,248,0.35);
     }
 
-    * {
-      box-sizing: border-box;
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
     }
 
-    html {
-      scroll-behavior: smooth;
+    html{
+      scroll-behavior:smooth;
     }
 
-    body {
-      margin: 0;
-      font-family: 'Inter', sans-serif;
-      background: radial-gradient(circle at top, #020617, #0f172a);
-      color: var(--text);
-      line-height: 1.7;
+    body{
+      background:
+        radial-gradient(circle at top,#071120 0%,#020617 60%);
+      color:var(--text);
+      font-family:'Inter',sans-serif;
+      overflow-x:hidden;
+      line-height:1.7;
     }
 
-    /* ---------------- Header ---------------- */
+    a{
+      text-decoration:none;
+      color:var(--primary);
+    }
 
-    header {
-      padding: 4rem 1rem 3rem;
-      text-align: center;
-      background: linear-gradient(
-        135deg,
-        rgba(8,145,178,0.25),
-        rgba(56,189,248,0.15)
+    /* ================= HERO ================= */
+
+    header{
+      position:relative;
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      overflow:hidden;
+      border-bottom:1px solid var(--border);
+    }
+
+    .hero{
+      position:relative;
+      z-index:2;
+      max-width:900px;
+      padding:2rem;
+    }
+
+    .hero h1{
+      font-family:'Orbitron',sans-serif;
+      font-size:clamp(3rem,7vw,5.5rem);
+      font-weight:700;
+      letter-spacing:0.05em;
+      color:white;
+      text-shadow:
+        0 0 10px rgba(56,189,248,0.6),
+        0 0 25px rgba(56,189,248,0.3);
+      animation:glitch 5s infinite;
+    }
+
+    .hero-subtitle{
+      margin-top:1rem;
+      font-size:1.3rem;
+      color:var(--secondary);
+      font-weight:500;
+      letter-spacing:0.08em;
+      text-transform:uppercase;
+    }
+
+    .hero-description{
+      margin-top:1.5rem;
+      color:var(--muted);
+      font-size:1.05rem;
+      max-width:700px;
+      margin-inline:auto;
+    }
+
+    /* ================= GRID EFFECT ================= */
+
+    .glow-grid{
+      position:absolute;
+      inset:0;
+      background-image:
+        linear-gradient(rgba(56,189,248,0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(56,189,248,0.08) 1px, transparent 1px);
+      background-size:50px 50px;
+      animation:gridMove 15s linear infinite;
+      opacity:0.4;
+    }
+
+    .scanlines{
+      position:absolute;
+      inset:0;
+      background:repeating-linear-gradient(
+        to bottom,
+        rgba(255,255,255,0.03),
+        rgba(255,255,255,0.03) 1px,
+        transparent 1px,
+        transparent 3px
       );
-      border-bottom: 1px solid var(--border);
+      animation:flicker 0.12s infinite;
+      pointer-events:none;
+      opacity:0.2;
     }
 
-    header h1 {
-      margin: 0;
-      font-size: clamp(2.2rem, 5vw, 3rem);
-      font-weight: 700;
-      letter-spacing: -0.02em;
+    .orb{
+      position:absolute;
+      width:600px;
+      height:600px;
+      background:radial-gradient(circle,rgba(56,189,248,0.25),transparent 70%);
+      filter:blur(80px);
+      animation:float 8s ease-in-out infinite;
     }
 
-    header p {
-      margin-top: 0.75rem;
-      font-size: 1.15rem;
-      color: var(--muted);
+    /* ================= MAIN ================= */
+
+    main{
+      max-width:1200px;
+      margin:auto;
+      padding:5rem 1.5rem;
     }
 
-    /* ---------------- Layout ---------------- */
-
-    main {
-      max-width: 1000px;
-      margin: 0 auto;
-      padding: 3rem 1.25rem;
+    section{
+      margin-bottom:3rem;
+      padding:2.5rem;
+      background:rgba(15,23,42,0.7);
+      border:1px solid var(--border);
+      backdrop-filter:blur(18px);
+      border-radius:24px;
+      box-shadow:
+        0 10px 30px rgba(0,0,0,0.25);
+      transition:0.35s ease;
     }
 
-    section.section {
-      background: var(--card-bg);
-      backdrop-filter: blur(14px);
-      border: 1px solid var(--border);
-      margin-bottom: 2.5rem;
-      padding: 2rem;
-      border-radius: 18px;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    section:hover{
+      transform:translateY(-6px);
+      box-shadow:
+        0 0 25px rgba(56,189,248,0.08);
     }
 
-    section.section:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
+    h2{
+      font-family:'Orbitron',sans-serif;
+      color:var(--primary);
+      margin-bottom:1.5rem;
+      font-size:1.7rem;
+      letter-spacing:0.05em;
     }
 
-    h2 {
-      margin-top: 0;
-      font-size: 1.5rem;
-      color: var(--primary);
-      letter-spacing: -0.01em;
+    p{
+      color:var(--text);
+      margin-bottom:1rem;
     }
 
-    p {
-      color: var(--text);
+    ul{
+      padding-left:1.5rem;
     }
 
-    ul {
-      padding-left: 1.2rem;
+    li{
+      margin-bottom:0.7rem;
+      color:var(--muted);
     }
 
-    li {
-      margin-bottom: 0.4rem;
-      color: var(--muted);
+    /* ================= TERMINAL ================= */
+
+    .terminal{
+      background:#000814;
+      border:1px solid rgba(56,189,248,0.2);
+      padding:1.5rem;
+      border-radius:18px;
+      font-family:monospace;
+      color:#7dd3fc;
+      box-shadow:
+        inset 0 0 25px rgba(56,189,248,0.08);
     }
 
-    a {
-      color: var(--primary);
-      text-decoration: none;
-      font-weight: 500;
+    .terminal p{
+      margin:0.4rem 0;
     }
 
-    a:hover {
-      text-decoration: underline;
+    /* ================= PROJECT GRID ================= */
+
+    .project-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+      gap:1.5rem;
     }
 
-    /* ---------------- Skills & Socials ---------------- */
-
-    .skills,
-    .socials {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.9rem;
-      margin-top: 1rem;
+    .project-card{
+      background:rgba(2,6,23,0.85);
+      border:1px solid rgba(56,189,248,0.1);
+      border-radius:18px;
+      padding:1.5rem;
+      transition:0.3s ease;
     }
 
-    .skills img,
-    .socials img {
-      width: 38px;
-      height: 38px;
-      padding: 6px;
-      border-radius: 10px;
-      background: rgba(255,255,255,0.04);
-      transition: transform 0.2s ease, background 0.2s ease;
+    .project-card:hover{
+      transform:translateY(-4px);
+      border-color:rgba(56,189,248,0.4);
+      box-shadow:
+        0 0 20px rgba(56,189,248,0.08);
     }
 
-    .skills img:hover,
-    .socials img:hover {
-      transform: translateY(-3px) scale(1.05);
-      background: rgba(255,255,255,0.08);
+    .project-card h3{
+      color:var(--secondary);
+      margin-bottom:1rem;
+      font-size:1.2rem;
     }
 
-    /* ---------------- GitHub Stats ---------------- */
-
-    .badges img {
-      width: 100%;
-      max-width: 520px;
-      margin: 1rem auto;
-      display: block;
-      border-radius: 14px;
-      border: 1px solid var(--border);
+    .project-card span{
+      color:var(--primary);
+      font-size:0.9rem;
+      font-weight:600;
     }
 
-    /* ---------------- Support ---------------- */
+    /* ================= SKILLS ================= */
 
-    ul.inline-list {
-      list-style: none;
-      padding: 0;
-      margin: 1.5rem 0 0;
-      display: flex;
-      justify-content: center;
+    .skills{
+      display:flex;
+      flex-wrap:wrap;
+      gap:1rem;
+      justify-content:center;
     }
 
-    /* ---------------- Responsive ---------------- */
+    .skills img{
+      width:52px;
+      transition:0.3s ease;
+      filter:drop-shadow(0 0 10px rgba(56,189,248,0.2));
+    }
 
-    @media (max-width: 600px) {
-      header {
-        padding: 3rem 1rem 2.5rem;
+    .skills img:hover{
+      transform:translateY(-5px) scale(1.08);
+    }
+
+    /* ================= GITHUB ================= */
+
+    .stats{
+      display:flex;
+      flex-direction:column;
+      gap:1.5rem;
+      align-items:center;
+    }
+
+    .stats img{
+      width:100%;
+      max-width:900px;
+      border-radius:18px;
+      border:1px solid rgba(255,255,255,0.08);
+    }
+
+    /* ================= SOCIALS ================= */
+
+    .socials{
+      display:flex;
+      justify-content:center;
+      gap:1.5rem;
+      margin-top:1rem;
+    }
+
+    .socials img{
+      width:55px;
+      transition:0.3s ease;
+    }
+
+    .socials img:hover{
+      transform:scale(1.15) translateY(-3px);
+    }
+
+    /* ================= FOOTER ================= */
+
+    footer{
+      text-align:center;
+      padding:3rem 1rem;
+      color:var(--muted);
+      border-top:1px solid var(--border);
+    }
+
+    /* ================= ANIMATIONS ================= */
+
+    @keyframes gridMove{
+      from{
+        transform:translateY(0);
+      }
+      to{
+        transform:translateY(50px);
+      }
+    }
+
+    @keyframes flicker{
+      0%{opacity:0.15;}
+      50%{opacity:0.22;}
+      100%{opacity:0.17;}
+    }
+
+    @keyframes float{
+      0%{
+        transform:translate(0,0);
+      }
+      50%{
+        transform:translate(40px,-30px);
+      }
+      100%{
+        transform:translate(0,0);
+      }
+    }
+
+    @keyframes glitch{
+
+      0%{
+        text-shadow:
+          2px 0 red,
+          -2px 0 cyan;
       }
 
-      section.section {
-        padding: 1.6rem;
+      2%{
+        text-shadow:
+          -2px 0 red,
+          2px 0 cyan;
       }
 
-      .skills,
-      .socials {
-        justify-content: center;
+      4%{
+        text-shadow:none;
+      }
+
+      100%{
+        text-shadow:none;
       }
     }
+
+    /* ================= MOBILE ================= */
+
+    @media(max-width:768px){
+
+      .hero h1{
+        font-size:3rem;
+      }
+
+      section{
+        padding:1.7rem;
+      }
+
+      .hero-subtitle{
+        font-size:1rem;
+      }
+
+    }
+
   </style>
 </head>
 
 <body>
 
   <header>
-    <h1>👋 Hi, I'm Adithya Cherian Abraham</h1>
-    <p>Machine Learning Researcher · TeX Enthusiast · Backend Developer</p>
+
+    <div class="glow-grid"></div>
+    <div class="scanlines"></div>
+    <div class="orb"></div>
+
+    <div class="hero">
+
+      <h1>ADITHYA CHERIAN ABRAHAM</h1>
+
+      <p class="hero-subtitle">
+        Machine Learning Researcher · Information Retrieval · Deep Learning Systems
+      </p>
+
+      <p class="hero-description">
+        Designing analytical systems, retrieval architectures,
+        and deployable machine learning pipelines.
+      </p>
+
+    </div>
+
   </header>
 
   <main>
 
-    <section class="section" id="about">
+    <section>
+
       <h2>About Me</h2>
+
       <p>
-        I'm a developer with a strong focus on building analytical and task-oriented tools, and a deep passion for machine learning—especially designing models that translate cleanly into real-world deployments.
+        Final-year MCA student at Amrita Vishwa Vidyapeetham, Mysuru,
+        with a strong foundation in deep learning, transformer architectures,
+        NLP, and information retrieval systems.
       </p>
+
       <p>
-        As a member of the <strong>TeX Users Group (TUG)</strong>, I value clarity, structure, and elegance in both code and documentation.
+        I enjoy translating mathematical ideas and research concepts into
+        practical systems, experiments, and deployable ML workflows.
       </p>
+
       <p>
-        I primarily work with <strong>Python</strong> and <strong>C++</strong>, and specialize in backend systems using the <strong>Django REST Framework</strong>. Recently, I’ve been exploring functional programming paradigms to rethink system design at a more abstract level.
+        My interests span transformer architectures, retrieval systems,
+        hybrid deep learning pipelines, and long-context memory modeling.
       </p>
+
+    </section>
+
+    <section>
+
+      <h2>Research Interests</h2>
+
       <ul>
-        <li>🌍 Based in India</li>
-        <li>✉️ <a href="mailto:adithyacherian@gmail.com">adithyacherian@gmail.com</a></li>
-        <li>🧠 Learning Django REST Framework</li>
-        <li>🤝 Open to ML & backend collaborations</li>
-        <li>⚡ Cycling enthusiast & coffee connoisseur</li>
+        <li>Transformer architectures & attention mechanisms</li>
+        <li>Dense retrieval and embedding optimization</li>
+        <li>Long-context memory systems</li>
+        <li>Hybrid deep learning pipelines</li>
+        <li>Generative adversarial simulation</li>
       </ul>
+
     </section>
 
-    <section class="section" id="skills">
-      <h2>Skills</h2>
+    <section>
+
+      <h2>Research Terminal</h2>
+
+      <div class="terminal">
+
+        <p>> researcher.init()</p>
+        <p>> Loading transformer architectures...</p>
+        <p>> Initializing retrieval systems...</p>
+        <p>> Loading experimental pipelines...</p>
+        <p>> Status: READY</p>
+
+      </div>
+
+    </section>
+
+    <section>
+
+      <h2>Research & Projects</h2>
+
+      <div class="project-grid">
+
+        <div class="project-card">
+          <h3>Cross-Lingual Information Retrieval</h3>
+          <p>
+            Bi-encoder retrieval system for Hinglish → English retrieval
+            using contrastive learning and MRL-enhanced embeddings.
+          </p>
+          <span>Transformers · FAISS · MRL · NLP</span>
+        </div>
+
+        <div class="project-card">
+          <h3>ViT + SVM Disease Detection</h3>
+          <p>
+            Hybrid Vision Transformer and SVM architecture for sugarcane
+            leaf disease classification with 96% accuracy.
+          </p>
+          <span>ViT · SVM · Computer Vision</span>
+        </div>
+
+        <div class="project-card">
+          <h3>SEEMA Smart Electricity Meter</h3>
+          <p>
+            IoT electricity monitoring platform with lightweight encryption
+            for constrained embedded environments.
+          </p>
+          <span>IoT · Embedded Systems · Cryptography</span>
+        </div>
+
+        <div class="project-card">
+          <h3>Traffic Congestion Visualizer</h3>
+          <p>
+            Starvation-aware traffic scheduling simulator with custom
+            dynamic priority heuristics.
+          </p>
+          <span>Simulation · Optimization · Systems</span>
+        </div>
+
+      </div>
+
+    </section>
+
+    <section>
+
+      <h2>Research Stack</h2>
+
       <div class="skills">
-        <img src="https://raw.githubusercontent.com/danielcranney/readme-generator/main/public/icons/skills/cplusplus-colored.svg" title="C++">
-        <img src="https://raw.githubusercontent.com/danielcranney/readme-generator/main/public/icons/skills/python-colored.svg" title="Python">
-        <img src="https://raw.githubusercontent.com/danielcranney/readme-generator/main/public/icons/skills/git-colored.svg" title="Git">
-        <img src="https://raw.githubusercontent.com/danielcranney/readme-generator/main/public/icons/skills/java-colored.svg" title="Java">
-        <img src="https://raw.githubusercontent.com/danielcranney/readme-generator/main/public/icons/skills/gnubash.svg" title="Bash">
-        <img src="https://raw.githubusercontent.com/danielcranney/readme-generator/main/public/icons/skills/neovim-colored.svg" title="Neovim">
-        <img src="https://raw.githubusercontent.com/danielcranney/readme-generator/main/public/icons/skills/vim-colored.svg" title="Vim">
-        <img src="https://raw.githubusercontent.com/danielcranney/readme-generator/main/public/icons/skills/html5-colored.svg" title="HTML5">
-        <img src="https://raw.githubusercontent.com/danielcranney/readme-generator/main/public/icons/skills/css3-colored.svg" title="CSS3">
-        <img src="https://raw.githubusercontent.com/danielcranney/readme-generator/main/public/icons/skills/postgresql-colored.svg" title="PostgreSQL">
-        <img src="https://raw.githubusercontent.com/danielcranney/readme-generator/main/public/icons/skills/docker-colored.svg" title="Docker">
-        <img src="https://raw.githubusercontent.com/danielcranney/readme-generator/main/public/icons/skills/linux-colored.svg" title="Linux">
+
+        <img src="https://skillicons.dev/icons?i=python" />
+        <img src="https://skillicons.dev/icons?i=cpp" />
+        <img src="https://skillicons.dev/icons?i=pytorch" />
+        <img src="https://skillicons.dev/icons?i=django" />
+        <img src="https://skillicons.dev/icons?i=docker" />
+        <img src="https://skillicons.dev/icons?i=linux" />
+        <img src="https://skillicons.dev/icons?i=git" />
+        <img src="https://skillicons.dev/icons?i=postgres" />
+        <img src="https://skillicons.dev/icons?i=aws" />
+        <img src="https://skillicons.dev/icons?i=neovim" />
+
       </div>
+
     </section>
 
-    <section class="section" id="socials">
-      <h2>Socials</h2>
+    <section>
+
+      <h2>GitHub Analytics</h2>
+
+      <div class="stats">
+
+        <img src="https://github-profile-summary-cards.vercel.app/api/cards/profile-details?username=cloud9ops&theme=tokyonight" />
+
+        <img src="https://streak-stats.demolab.com?user=cloud9ops&theme=tokyonight&hide_border=true" />
+
+        <img src="https://github-readme-activity-graph.vercel.app/graph?username=cloud9ops&theme=tokyo-night&hide_border=true" />
+
+      </div>
+
+    </section>
+
+    <section>
+
+      <h2>Connect</h2>
+
       <div class="socials">
+
         <a href="https://github.com/cloud9ops" target="_blank">
-          <img src="https://raw.githubusercontent.com/danielcranney/readme-generator/main/public/icons/socials/github.svg" title="GitHub">
+          <img src="https://skillicons.dev/icons?i=github" />
         </a>
+
         <a href="https://www.linkedin.com/in/adithya-cherian-abraham-63a13824a/" target="_blank">
-          <img src="https://raw.githubusercontent.com/danielcranney/readme-generator/main/public/icons/socials/linkedin.svg" title="LinkedIn">
+          <img src="https://skillicons.dev/icons?i=linkedin" />
         </a>
+
       </div>
-    </section>
 
-    <section class="section badges" id="stats">
-  <h2>GitHub Stats</h2>
-
-  <img
-    src="https://github-readme-stats.vercel.app/api?username=cloud9ops&show_icons=true&count_private=true&title_color=38bdf8&text_color=e5e7eb&icon_color=38bdf8&bg_color=020617&hide_border=true"
-    alt="GitHub Stats"
-    referrerpolicy="no-referrer"
-    loading="lazy"
-  >
-
-  <img
-    src="https://github-readme-stats.vercel.app/api/top-langs/?username=cloud9ops&langs_count=8&title_color=38bdf8&text_color=e5e7eb&bg_color=020617&hide_border=true"
-    alt="Top Languages"
-    referrerpolicy="no-referrer"
-    loading="lazy"
-  >
-</section>
-
-
-    <section class="section" id="support">
-      <h2>Support Me</h2>
-      <ul class="inline-list">
-        <li>
-          <a href="https://www.buymeacoffee.com/aderham" target="_blank">
-            <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" width="160">
-          </a>
-        </li>
-      </ul>
     </section>
 
   </main>
+
+  <footer>
+
+    <p>
+      “Build systems that survive reality.”
+    </p>
+
+  </footer>
 
 </body>
 </html>
