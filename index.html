@@ -133,12 +133,13 @@
     .game-pointer-arrow{width:0;height:0;border-top:7px solid transparent;border-bottom:7px solid transparent;border-left:8px solid rgba(255,107,53,.35);flex-shrink:0}
     @keyframes pointerBounce{0%,100%{transform:translateX(0)}50%{transform:translateX(10px)}}
 
-    /* Game toggle button - Vertical Tab */
-    .game-toggle-btn{position:fixed;right:var(--game-w);top:50%;transform:translateY(-50%);z-index:150;width:26px;height:90px;background:var(--surface);border:1px solid var(--border);border-right:none;border-radius:8px 0 0 8px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--accent);transition:right .4s cubic-bezier(.4,0,.2,1),color .2s,background .2s;writing-mode:vertical-rl;font-family:var(--mono);font-size:.65rem;letter-spacing:.15em;text-transform:uppercase;font-weight:600}
+    /* Game toggle button */
+    .game-toggle-btn{position:fixed;right:var(--game-w);top:50%;transform:translateY(-50%);z-index:150;width:22px;height:44px;background:var(--surface);border:1px solid var(--border);border-right:none;border-radius:6px 0 0 6px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text-dim);transition:right .4s cubic-bezier(.4,0,.2,1),color .2s,background .2s}
     .game-toggle-btn:hover{color:var(--accent);background:var(--surface-2)}
+    .game-toggle-btn svg{width:12px;height:12px;transition:transform .3s}
     body.game-hidden .game-toggle-btn{right:0}
-    body.game-hidden .game-toggle-btn .toggle-text::before{content:"Show Game"}
-    body:not(.game-hidden) .game-toggle-btn .toggle-text::before{content:"Hide Game"}
+    body.game-hidden .game-toggle-btn svg{transform:rotate(180deg)}
+    body.game-hidden .content-wrap,body.game-hidden footer{margin-right:0}
 
     .game-header{padding:.7rem .8rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-shrink:0;background:rgba(15,15,23,.8)}
     .game-title{font-family:var(--mono);font-size:.6rem;letter-spacing:.15em;text-transform:uppercase;color:var(--accent)}
@@ -198,7 +199,7 @@
 
 <!-- Game toggle -->
 <button class="game-toggle-btn" id="game-toggle-btn" aria-label="Toggle game panel">
-  <span class="toggle-text"></span>
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
 </button>
 
 <!-- Game Rail -->
@@ -566,184 +567,67 @@
 
 /* ═══════════════════════════════════════
    CHIPTUNE MUSIC (Web Audio API)
-   Robust Look-ahead Scheduler for Infinite Loop
+   Original composition in G major
 ═══════════════════════════════════════ */
-var Music = {
-  ctx: null, 
-  playing: false, 
-  master: null, 
-  nextEnd: 0, 
-  timerId: null, 
-  bpm: 138,
-  N: {G3:196,A3:220,B3:247,C4:262,D4:294,E4:330,G4:392,A4:440,B4:494,C5:523,D5:587,E5:659,G5:784,A5:880,B5:988,D6:1175,E6:1319},
-  
+var Music={
+  ctx:null,playing:false,master:null,nextEnd:0,timerId:null,bpm:138,
+  N:{G3:196,A3:220,B3:247,C4:262,D4:294,E4:330,G4:392,A4:440,B4:494,C5:523,D5:587,E5:659,G5:784,A5:880,B5:988,D6:1175,E6:1319},
   /* Melody: [note, beats] */
-  mel: [
+  mel:[
     ['G5',.5],['B5',.5],['D6',1],['E6',.5],['D6',.5],['B5',.5],['A5',.5],
     ['G5',.5],['A5',.5],['B5',1],['D6',.5],['B5',.5],['A5',.5],['G5',.5],
     ['E5',.5],['G5',.5],['A5',1],['B5',.5],['A5',.5],['G5',.5],['E5',.5],
     ['D5',.5],['E5',.5],['G5',1],['B5',.5],['A5',.5],['G5',1]
   ],
   /* Bass: [note, beats] */
-  bas: [
+  bas:[
     ['G3',1],['B3',1],['D4',1],['G3',1],
     ['C4',1],['E3',1],['G3',1],['C4',1],
     ['A3',1],['D3',1],['E3',1],['A3',1],
     ['G3',1],['D3',1],['G3',1],['G3',1]
   ],
-  
-  bd: function() { return 60 / this.bpm; },
-  
-  playNote: function(freq, time, dur, type, vol) {
-    // Fail-safe to prevent scheduling notes in the past if the tab was delayed
-    if (time < this.ctx.currentTime) time = this.ctx.currentTime + 0.05;
-    
-    var o = this.ctx.createOscillator(), g = this.ctx.createGain();
-    o.type = type;
-    o.frequency.value = freq;
-    
-    if (type === 'square') {
-      var lfo = this.ctx.createOscillator(), lg = this.ctx.createGain();
-      lfo.frequency.value = 5;
-      lg.gain.value = 1.5;
-      lfo.connect(lg);
-      lg.connect(o.frequency);
-      lfo.start(time);
-      lfo.stop(time + dur + .1);
-    }
-    
-    g.gain.setValueAtTime(vol, time);
-    g.gain.setValueAtTime(vol * .75, time + dur * .65);
-    g.gain.linearRampToValueAtTime(0, time + dur);
-    
-    o.connect(g);
-    g.connect(this.master);
-    o.start(time);
-    o.stop(time + dur + .05);
+  bd:function(){return 60/this.bpm},
+  playNote:function(freq,time,dur,type,vol){
+    var o=this.ctx.createOscillator(),g=this.ctx.createGain();
+    o.type=type;o.frequency.value=freq;
+    if(type==='square'){var lfo=this.ctx.createOscillator(),lg=this.ctx.createGain();lfo.frequency.value=5;lg.gain.value=1.5;lfo.connect(lg);lg.connect(o.frequency);lfo.start(time);lfo.stop(time+dur+.1)}
+    g.gain.setValueAtTime(vol,time);g.gain.setValueAtTime(vol*.75,time+dur*.65);g.gain.linearRampToValueAtTime(0,time+dur);
+    o.connect(g);g.connect(this.master);o.start(time);o.stop(time+dur+.05);
   },
-  
-  scheduleLoop: function(st) {
-    // If we somehow fell behind, jump forward slightly
-    if (st < this.ctx.currentTime) st = this.ctx.currentTime + 0.05;
-    
-    var t = st;
-    for (var i = 0; i < this.mel.length; i++) {
-      var n = this.mel[i], d = n[1] * this.bd();
-      this.playNote(this.N[n[0]], t, d * .88, 'square', .06);
-      t += d;
-    }
-    
-    t = st;
-    for (var i = 0; i < this.bas.length; i++) {
-      var n = this.bas[i], d = n[1] * this.bd();
-      this.playNote(this.N[n[0]], t, d * .82, 'triangle', .1);
-      t += d;
-    }
-    
-    return t; // Returns the exact end time of the loop
+  scheduleLoop:function(st){
+    var t=st;
+    for(var i=0;i<this.mel.length;i++){var n=this.mel[i],d=n[1]*this.bd();this.playNote(this.N[n[0]],t,d*.88,'square',.06);t+=d}
+    t=st;for(var i=0;i<this.bas.length;i++){var n=this.bas[i],d=n[1]*this.bd();this.playNote(this.N[n[0]],t,d*.82,'triangle',.1);t+=d}
+    return t;
   },
-  
-  toggle: function() {
-    if (!this.ctx) {
-      this.ctx = new (window.AudioContext || window.webkitAudioContext)();
-      this.master = this.ctx.createGain();
-      this.master.gain.value = .15;
-      this.master.connect(this.ctx.destination);
-    }
-    
-    var self = this;
-    
-    if (this.playing) {
-      this.playing = false;
-      clearInterval(this.timerId);
-      this.ctx.suspend();
+  toggle:function(){
+    if(!this.ctx){this.ctx=new(window.AudioContext||window.webkitAudioContext)();this.master=this.ctx.createGain();this.master.gain.value=.15;this.master.connect(this.ctx.destination)}
+    var self=this;
+    if(this.playing){this.playing=false;clearInterval(this.timerId);this.ctx.suspend();
       document.getElementById('music-btn').classList.remove('active');
-    } else {
-      this.playing = true;
-      this.ctx.resume();
-      
-      // If it's the first time or we lost track, initialize nextEnd
-      if (!this.nextEnd || this.nextEnd < this.ctx.currentTime) {
-        this.nextEnd = this.ctx.currentTime + 0.1;
-      }
-      
-      // Look-ahead scheduler: runs frequently and schedules audio precisely ahead of time
-      this.timerId = setInterval(function() {
-        if (!self.playing || !self.ctx) return;
-        
-        var now = self.ctx.currentTime;
-        
-        // Catch up if we fell behind (e.g., tab was in background)
-        if (self.nextEnd < now) {
-          self.nextEnd = now + 0.1;
-        }
-        
-        // Schedule up to 1.5 seconds ahead of time to prevent dropouts
-        while (self.nextEnd < now + 1.5) {
-          self.nextEnd = self.scheduleLoop(self.nextEnd);
-        }
-      }, 250);
-      
+    }else{this.playing=true;this.ctx.resume();this.nextEnd=this.scheduleLoop(this.ctx.currentTime+.05);
+      this.timerId=setInterval(function(){if(self.ctx.currentTime+.6>self.nextEnd)self.nextEnd=self.scheduleLoop(self.nextEnd)},200);
       document.getElementById('music-btn').classList.add('active');
     }
   }
 };
-
-document.getElementById('music-btn').addEventListener('click', function() {
-  Music.toggle();
-});
-
-/* Autoplay Music on First Interaction to bypass browser restrictions */
-function startMusicOnFirstInteraction() {
-  if (!Music.playing) {
-    Music.toggle();
-  }
-  ['click', 'keydown', 'touchstart', 'pointerdown'].forEach(function(evt) {
-    document.removeEventListener(evt, startMusicOnFirstInteraction);
-  });
-}
-
-['click', 'keydown', 'touchstart', 'pointerdown'].forEach(function(evt) {
-  document.addEventListener(evt, startMusicOnFirstInteraction);
-});
+document.getElementById('music-btn').addEventListener('click',function(){Music.toggle()});
 
 /* ═══════════════════════════════════════
    UI INTERACTIONS
 ═══════════════════════════════════════ */
-var ro = new IntersectionObserver(function(entries) {
-  entries.forEach(function(e) {
-    if (e.isIntersecting) {
-      e.target.classList.add('visible');
-      ro.unobserve(e.target);
-    }
-  });
-}, {threshold: .08, rootMargin: '0px 0px -40px 0px'});
+var ro=new IntersectionObserver(function(entries){entries.forEach(function(e){if(e.isIntersecting){e.target.classList.add('visible');ro.unobserve(e.target)}})},{threshold:.08,rootMargin:'0px 0px -40px 0px'});
+document.querySelectorAll('.reveal').forEach(function(el){ro.observe(el)});
 
-document.querySelectorAll('.reveal').forEach(function(el) { ro.observe(el); });
+var nav=document.getElementById('navbar');
+window.addEventListener('scroll',function(){nav.classList.toggle('scrolled',window.scrollY>40)},{passive:true});
 
-var nav = document.getElementById('navbar');
-window.addEventListener('scroll', function() {
-  nav.classList.toggle('scrolled', window.scrollY > 40);
-}, {passive: true});
-
-document.getElementById('hamburger-btn').addEventListener('click', function() {
-  document.getElementById('mobile-menu').classList.add('open');
-});
-
-document.getElementById('mobile-close').addEventListener('click', function() {
-  document.getElementById('mobile-menu').classList.remove('open');
-});
-
-document.querySelectorAll('.mobile-link').forEach(function(l) {
-  l.addEventListener('click', function() {
-    document.getElementById('mobile-menu').classList.remove('open');
-  });
-});
+document.getElementById('hamburger-btn').addEventListener('click',function(){document.getElementById('mobile-menu').classList.add('open')});
+document.getElementById('mobile-close').addEventListener('click',function(){document.getElementById('mobile-menu').classList.remove('open')});
+document.querySelectorAll('.mobile-link').forEach(function(l){l.addEventListener('click',function(){document.getElementById('mobile-menu').classList.remove('open')})});
 
 /* Game panel toggle */
-document.getElementById('game-toggle-btn').addEventListener('click', function() {
-  document.body.classList.toggle('game-hidden');
-});
+document.getElementById('game-toggle-btn').addEventListener('click',function(){document.body.classList.toggle('game-hidden')});
 </script>
 </body>
 </html>
