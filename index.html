@@ -133,13 +133,12 @@
     .game-pointer-arrow{width:0;height:0;border-top:7px solid transparent;border-bottom:7px solid transparent;border-left:8px solid rgba(255,107,53,.35);flex-shrink:0}
     @keyframes pointerBounce{0%,100%{transform:translateX(0)}50%{transform:translateX(10px)}}
 
-    /* Game toggle button */
-    .game-toggle-btn{position:fixed;right:var(--game-w);top:50%;transform:translateY(-50%);z-index:150;width:22px;height:44px;background:var(--surface);border:1px solid var(--border);border-right:none;border-radius:6px 0 0 6px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text-dim);transition:right .4s cubic-bezier(.4,0,.2,1),color .2s,background .2s}
+    /* Game toggle button - Vertical Tab */
+    .game-toggle-btn{position:fixed;right:var(--game-w);top:50%;transform:translateY(-50%);z-index:150;width:26px;height:90px;background:var(--surface);border:1px solid var(--border);border-right:none;border-radius:8px 0 0 8px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--accent);transition:right .4s cubic-bezier(.4,0,.2,1),color .2s,background .2s;writing-mode:vertical-rl;font-family:var(--mono);font-size:.65rem;letter-spacing:.15em;text-transform:uppercase;font-weight:600}
     .game-toggle-btn:hover{color:var(--accent);background:var(--surface-2)}
-    .game-toggle-btn svg{width:12px;height:12px;transition:transform .3s}
     body.game-hidden .game-toggle-btn{right:0}
-    body.game-hidden .game-toggle-btn svg{transform:rotate(180deg)}
-    body.game-hidden .content-wrap,body.game-hidden footer{margin-right:0}
+    body.game-hidden .game-toggle-btn .toggle-text::before{content:"Show Game"}
+    body:not(.game-hidden) .game-toggle-btn .toggle-text::before{content:"Hide Game"}
 
     .game-header{padding:.7rem .8rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-shrink:0;background:rgba(15,15,23,.8)}
     .game-title{font-family:var(--mono);font-size:.6rem;letter-spacing:.15em;text-transform:uppercase;color:var(--accent)}
@@ -199,7 +198,7 @@
 
 <!-- Game toggle -->
 <button class="game-toggle-btn" id="game-toggle-btn" aria-label="Toggle game panel">
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+  <span class="toggle-text"></span>
 </button>
 
 <!-- Game Rail -->
@@ -566,68 +565,198 @@
 })();
 
 /* ═══════════════════════════════════════
-   CHIPTUNE MUSIC (Web Audio API)
-   Original composition in G major
+   AMBIENT MELODY LOOP (Web Audio API)
+   Robust Look-ahead Scheduler for Infinite Loop
 ═══════════════════════════════════════ */
-var Music={
-  ctx:null,playing:false,master:null,nextEnd:0,timerId:null,bpm:138,
-  N:{G3:196,A3:220,B3:247,C4:262,D4:294,E4:330,G4:392,A4:440,B4:494,C5:523,D5:587,E5:659,G5:784,A5:880,B5:988,D6:1175,E6:1319},
-  /* Melody: [note, beats] */
-  mel:[
-    ['G5',.5],['B5',.5],['D6',1],['E6',.5],['D6',.5],['B5',.5],['A5',.5],
-    ['G5',.5],['A5',.5],['B5',1],['D6',.5],['B5',.5],['A5',.5],['G5',.5],
-    ['E5',.5],['G5',.5],['A5',1],['B5',.5],['A5',.5],['G5',.5],['E5',.5],
-    ['D5',.5],['E5',.5],['G5',1],['B5',.5],['A5',.5],['G5',1]
+var Music = {
+  ctx: null,
+  master: null,
+  isPlaying: false,
+  isMuted: false,
+  nextNoteTime: 0,
+  currentNote: 0,
+  tempo: 100,
+  lookahead: 25.0, // ms
+  scheduleAheadTime: 0.2, // s
+  timerID: null,
+  
+  // A pleasant 4-chord arpeggio (Am - C - G - F) that loops cleanly
+  // [frequency, duration_in_beats]
+  melody: [
+    [220.00, 0.5], [261.63, 0.5], [329.63, 0.5], [440.00, 0.5], // Am
+    [261.63, 0.5], [329.63, 0.5], [392.00, 0.5], [523.25, 0.5], // C
+    [196.00, 0.5], [246.94, 0.5], [293.66, 0.5], [392.00, 0.5], // G
+    [174.61, 0.5], [220.00, 0.5], [261.63, 0.5], [349.23, 0.5]  // F
   ],
-  /* Bass: [note, beats] */
-  bas:[
-    ['G3',1],['B3',1],['D4',1],['G3',1],
-    ['C4',1],['E3',1],['G3',1],['C4',1],
-    ['A3',1],['D3',1],['E3',1],['A3',1],
-    ['G3',1],['D3',1],['G3',1],['G3',1]
-  ],
-  bd:function(){return 60/this.bpm},
-  playNote:function(freq,time,dur,type,vol){
-    var o=this.ctx.createOscillator(),g=this.ctx.createGain();
-    o.type=type;o.frequency.value=freq;
-    if(type==='square'){var lfo=this.ctx.createOscillator(),lg=this.ctx.createGain();lfo.frequency.value=5;lg.gain.value=1.5;lfo.connect(lg);lg.connect(o.frequency);lfo.start(time);lfo.stop(time+dur+.1)}
-    g.gain.setValueAtTime(vol,time);g.gain.setValueAtTime(vol*.75,time+dur*.65);g.gain.linearRampToValueAtTime(0,time+dur);
-    o.connect(g);g.connect(this.master);o.start(time);o.stop(time+dur+.05);
+
+  init: function() {
+    if (!this.ctx) {
+      this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+      this.master = this.ctx.createGain();
+      this.master.gain.value = 0; // Start muted/0
+      this.master.connect(this.ctx.destination);
+    }
   },
-  scheduleLoop:function(st){
-    var t=st;
-    for(var i=0;i<this.mel.length;i++){var n=this.mel[i],d=n[1]*this.bd();this.playNote(this.N[n[0]],t,d*.88,'square',.06);t+=d}
-    t=st;for(var i=0;i<this.bas.length;i++){var n=this.bas[i],d=n[1]*this.bd();this.playNote(this.N[n[0]],t,d*.82,'triangle',.1);t+=d}
-    return t;
+
+  start: function() {
+    // Strict guard: If it's already playing, do absolutely nothing.
+    if (this.isPlaying) return; 
+    
+    this.init();
+    this.ctx.resume();
+    
+    this.isPlaying = true;
+    this.isMuted = false;
+    this.currentNote = 0;
+    this.nextNoteTime = this.ctx.currentTime + 0.1;
+    
+    // Fade in smoothly
+    var now = this.ctx.currentTime;
+    this.master.gain.cancelScheduledValues(now);
+    this.master.gain.setValueAtTime(this.master.gain.value, now);
+    this.master.gain.linearRampToValueAtTime(0.06, now + 1.0);
+    
+    document.getElementById('music-btn').classList.add('active');
+    
+    var self = this;
+    this.timerID = setInterval(function() { self.scheduler(); }, this.lookahead);
   },
-  toggle:function(){
-    if(!this.ctx){this.ctx=new(window.AudioContext||window.webkitAudioContext)();this.master=this.ctx.createGain();this.master.gain.value=.15;this.master.connect(this.ctx.destination)}
-    var self=this;
-    if(this.playing){this.playing=false;clearInterval(this.timerId);this.ctx.suspend();
+
+  scheduler: function() {
+    if (!this.isPlaying || !this.ctx) return;
+    
+    var now = this.ctx.currentTime;
+    
+    // Catch up if we fell behind (e.g., tab was in background)
+    if (this.nextNoteTime < now) {
+      this.nextNoteTime = now + 0.05;
+    }
+    
+    // Schedule notes up to scheduleAheadTime in the future
+    while (this.nextNoteTime < now + this.scheduleAheadTime) {
+      this.scheduleNote(this.currentNote, this.nextNoteTime);
+      this.nextNote();
+    }
+  },
+
+  nextNote: function() {
+    var secondsPerBeat = 60.0 / this.tempo;
+    this.nextNoteTime += this.melody[this.currentNote][1] * secondsPerBeat;
+    this.currentNote++;
+    if (this.currentNote === this.melody.length) {
+      this.currentNote = 0; // Loop back to the beginning
+    }
+  },
+
+  scheduleNote: function(beatNumber, time) {
+    var freq = this.melody[beatNumber][0];
+    var dur = this.melody[beatNumber][1] * (60.0 / this.tempo);
+
+    var osc = this.ctx.createOscillator();
+    var env = this.ctx.createGain();
+
+    osc.type = 'triangle';
+    osc.frequency.value = freq;
+
+    // Simple envelope to prevent clicking
+    env.gain.setValueAtTime(0, time);
+    env.gain.linearRampToValueAtTime(0.15, time + 0.02);
+    env.gain.linearRampToValueAtTime(0, time + dur * 0.9);
+
+    osc.connect(env);
+    env.connect(this.master);
+    
+    osc.start(time);
+    osc.stop(time + dur + 0.05);
+  },
+
+  toggleMute: function() {
+    if (!this.isPlaying) {
+      this.start();
+      return;
+    }
+    
+    this.isMuted = !this.isMuted;
+    var now = this.ctx.currentTime;
+    this.master.gain.cancelScheduledValues(now);
+    this.master.gain.setValueAtTime(this.master.gain.value, now);
+    
+    if (this.isMuted) {
+      this.master.gain.linearRampToValueAtTime(0, now + 0.3);
       document.getElementById('music-btn').classList.remove('active');
-    }else{this.playing=true;this.ctx.resume();this.nextEnd=this.scheduleLoop(this.ctx.currentTime+.05);
-      this.timerId=setInterval(function(){if(self.ctx.currentTime+.6>self.nextEnd)self.nextEnd=self.scheduleLoop(self.nextEnd)},200);
+    } else {
+      this.master.gain.linearRampToValueAtTime(0.06, now + 0.3);
       document.getElementById('music-btn').classList.add('active');
     }
   }
 };
-document.getElementById('music-btn').addEventListener('click',function(){Music.toggle()});
+
+document.getElementById('music-btn').addEventListener('click', function() {
+  Music.toggleMute();
+});
+
+/* Autoplay Music on First Interaction to bypass browser restrictions */
+var firstInteractionHandled = false;
+function handleFirstInteraction(e) {
+  if (firstInteractionHandled) return;
+  
+  // If the first interaction is clicking the music button, let the button handle it
+  if (e.target && e.target.closest('#music-btn')) {
+    return;
+  }
+  
+  firstInteractionHandled = true;
+  
+  if (!Music.isPlaying) {
+    Music.start();
+  }
+  
+  ['click', 'keydown', 'touchstart', 'pointerdown'].forEach(function(evt) {
+    document.removeEventListener(evt, handleFirstInteraction);
+  });
+}
+
+['click', 'keydown', 'touchstart', 'pointerdown'].forEach(function(evt) {
+  document.addEventListener(evt, handleFirstInteraction);
+});
 
 /* ═══════════════════════════════════════
    UI INTERACTIONS
 ═══════════════════════════════════════ */
-var ro=new IntersectionObserver(function(entries){entries.forEach(function(e){if(e.isIntersecting){e.target.classList.add('visible');ro.unobserve(e.target)}})},{threshold:.08,rootMargin:'0px 0px -40px 0px'});
-document.querySelectorAll('.reveal').forEach(function(el){ro.observe(el)});
+var ro = new IntersectionObserver(function(entries) {
+  entries.forEach(function(e) {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      ro.unobserve(e.target);
+    }
+  });
+}, {threshold: .08, rootMargin: '0px 0px -40px 0px'});
 
-var nav=document.getElementById('navbar');
-window.addEventListener('scroll',function(){nav.classList.toggle('scrolled',window.scrollY>40)},{passive:true});
+document.querySelectorAll('.reveal').forEach(function(el) { ro.observe(el); });
 
-document.getElementById('hamburger-btn').addEventListener('click',function(){document.getElementById('mobile-menu').classList.add('open')});
-document.getElementById('mobile-close').addEventListener('click',function(){document.getElementById('mobile-menu').classList.remove('open')});
-document.querySelectorAll('.mobile-link').forEach(function(l){l.addEventListener('click',function(){document.getElementById('mobile-menu').classList.remove('open')})});
+var nav = document.getElementById('navbar');
+window.addEventListener('scroll', function() {
+  nav.classList.toggle('scrolled', window.scrollY > 40);
+}, {passive: true});
+
+document.getElementById('hamburger-btn').addEventListener('click', function() {
+  document.getElementById('mobile-menu').classList.add('open');
+});
+
+document.getElementById('mobile-close').addEventListener('click', function() {
+  document.getElementById('mobile-menu').classList.remove('open');
+});
+
+document.querySelectorAll('.mobile-link').forEach(function(l) {
+  l.addEventListener('click', function() {
+    document.getElementById('mobile-menu').classList.remove('open');
+  });
+});
 
 /* Game panel toggle */
-document.getElementById('game-toggle-btn').addEventListener('click',function(){document.body.classList.toggle('game-hidden')});
+document.getElementById('game-toggle-btn').addEventListener('click', function() {
+  document.body.classList.toggle('game-hidden');
+});
 </script>
 </body>
 </html>
